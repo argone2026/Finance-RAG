@@ -1,469 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance RAG Assistant</title>
+    <title>Finance RAG</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .upload-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            display: none;
-        }
-
-        .file-input-label {
-            display: block;
-            padding: 15px 20px;
-            background: #667eea;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.3s;
-            font-weight: 500;
-        }
-
-        .file-input-label:hover {
-            background: #764ba2;
-        }
-
-        .file-name {
-            margin-top: 10px;
-            color: #666;
-            font-size: 0.95em;
-        }
-
-        button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 500;
-            transition: background 0.3s;
-            margin-top: 15px;
-        }
-
-        button:hover {
-            background: #764ba2;
-        }
-
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .status {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            display: none;
-        }
-
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        .status.loading {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-            display: block;
-        }
-
-        .question-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .answer-section {
-            margin-top: 30px;
-        }
-
-        .answer-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            margin-bottom: 20px;
-        }
-
-        .answer-box h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .answer-text {
-            color: #555;
-            line-height: 1.6;
-            font-size: 1.05em;
-        }
-
-        .sources-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #764ba2;
-        }
-
-        .sources-box h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .source-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            border: 1px solid #e0e0e0;
-            color: #666;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-
-        .source-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #999;
-            padding: 40px 20px;
-            font-size: 1.05em;
-        }
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; background: #f5f5f5; }
+        h1 { color: #333; }
+        h2 { color: #555; margin-top: 20px; }
+        input, button { padding: 8px; margin: 5px 0; font-size: 14px; }
+        input[type="file"], input[type="text"] { width: 100%; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; }
+        .status { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .result { background: white; padding: 15px; margin: 15px 0; border-radius: 3px; }
+        pre { background: #f0f0f0; padding: 10px; overflow-x: auto; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>💰 Finance RAG Assistant</h1>
-            <p>Upload your bank statement and ask questions about it</p>
-        </header>
+    <h1>Finance RAG</h1>
+    
+    <h2>Upload PDF</h2>
+    <input type="file" id="pdf" accept=".pdf" />
+    <button onclick="upload()">Upload</button>
+    <div id="uploadStatus"></div>
 
-        <!-- Auth Modal -->
-        <div id="authModal" class="modal">
-            <div class="modal-content">
-                <h2>🔐 Authentication Required</h2>
-                <p>Please enter the access key to continue</p>
-                <input 
-                    type="password" 
-                    id="authInput" 
-                    placeholder="Enter access key"
-                    class="auth-input"
-                />
-                <button onclick="authenticate()" class="auth-button">Access</button>
-                <div class="status" id="authStatus"></div>
-            </div>
-        </div>
+    <h2>Ask Question</h2>
+    <input type="text" id="query" placeholder="Enter your question" />
+    <button onclick="ask()">Ask</button>
+    <div id="queryStatus"></div>
 
-        <!-- Main Content (hidden until authenticated) -->
-        <div id="mainContent" class="hidden">
-
-        <!-- Upload Section -->
-        <div class="card upload-section">
-            <h2>Step 1: Upload Your Bank Statement</h2>
-            <div class="file-input-wrapper">
-                <input type="file" id="pdfFile" accept=".pdf" />
-                <label for="pdfFile" class="file-input-label">
-                    📄 Choose PDF File
-                </label>
-                <div class="file-name" id="fileName"></div>
-            </div>
-            <button id="uploadBtn" onclick="uploadPDF()" disabled>Upload & Process</button>
-            <div class="status" id="uploadStatus"></div>
-        </div>
-
-        <!-- Question Section -->
-        <div class="card question-section">
-            <h2>Step 2: Ask Questions</h2>
-            <div class="input-group">
-                <input 
-                    type="text" 
-                    id="questionInput" 
-                    placeholder="e.g., What was my closing balance?"
-                    disabled
-                />
-                <button id="askBtn" onclick="askQuestion()" disabled>Ask</button>
-            </div>
-            <div class="status" id="questionStatus"></div>
-
-            <!-- Answer Display -->
-            <div id="answerSection" class="answer-section hidden">
-                <div class="answer-box">
-                    <h3>Answer:</h3>
-                    <div class="answer-text" id="answerText"></div>
-                </div>
-
-                <div class="sources-box">
-                    <h3>📚 Source Documents:</h3>
-                    <div id="sourcesList"></div>
-                </div>
-            </div>
-
-            <div id="emptyState" class="empty-state">
-                Upload a PDF first to start asking questions.
-            </div>
-        </div>
-        </div>
+    <div id="answer" style="display:none;" class="result">
+        <h3>Answer:</h3>
+        <p id="answerText"></p>
+        <h3>Sources:</h3>
+        <div id="sources"></div>
     </div>
 
     <script>
-        let documentUploaded = false;
-        let authToken = null;
+        let uploaded = false;
 
-        // Check if already authenticated
-        window.addEventListener('load', function() {
-            authToken = localStorage.getItem('authToken');
-            if (authToken) {
-                document.getElementById('authModal').style.display = 'none';
-                document.getElementById('mainContent').classList.remove('hidden');
-            } else {
-                document.getElementById('authModal').style.display = 'flex';
-            }
-        });
+        async function upload() {
+            const file = document.getElementById('pdf').files[0];
+            if (!file) return alert('Select a PDF');
 
-        // Allow Enter key for auth
-        document.getElementById('authInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                authenticate();
-            }
-        });
-
-        async function authenticate() {
-            const input = document.getElementById('authInput').value.trim();
-            if (!input) {
-                showStatus('authStatus', 'Please enter the access key', 'error');
-                return;
-            }
-
-            authToken = input;
-            localStorage.setItem('authToken', authToken);
+            const form = new FormData();
+            form.append('file', file);
             
-            document.getElementById('authModal').style.display = 'none';
-            document.getElementById('mainContent').classList.remove('hidden');
-            document.getElementById('authInput').value = '';
-        }
-
-        document.getElementById('pdfFile').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name || '';
-            document.getElementById('fileName').textContent = fileName ? `Selected: ${fileName}` : '';
-            document.getElementById('uploadBtn').disabled = !fileName;
-        });
-
-        async function uploadPDF() {
-            const fileInput = document.getElementById('pdfFile');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                showStatus('uploadStatus', 'Please select a PDF file', 'error');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            showStatus('uploadStatus', 'Uploading and processing...', 'loading');
-            document.getElementById('uploadBtn').disabled = true;
-
+            document.getElementById('uploadStatus').textContent = 'Uploading...';
+            
             try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showStatus('uploadStatus', `✓ ${data.message}`, 'success');
-                    documentUploaded = true;
-                    document.getElementById('questionInput').disabled = false;
-                    document.getElementById('askBtn').disabled = false;
-                    document.getElementById('emptyState').classList.add('hidden');
-                    fileInput.disabled = true;
+                const res = await fetch('/upload', { method: 'POST', body: form });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    document.getElementById('uploadStatus').textContent = data.message;
+                    document.getElementById('uploadStatus').className = 'status success';
+                    uploaded = true;
                 } else {
-                    showStatus('uploadStatus', `Error: ${data.detail}`, 'error');
-                    document.getElementById('uploadBtn').disabled = false;
+                    document.getElementById('uploadStatus').textContent = data.detail;
+                    document.getElementById('uploadStatus').className = 'status error';
                 }
-            } catch (error) {
-                showStatus('uploadStatus', `Error: ${error.message}`, 'error');
-                document.getElementById('uploadBtn').disabled = false;
+            } catch (e) {
+                document.getElementById('uploadStatus').textContent = e.message;
+                document.getElementById('uploadStatus').className = 'status error';
             }
         }
 
-        async function askQuestion() {
-            const question = document.getElementById('questionInput').value.trim();
+        async function ask() {
+            const q = document.getElementById('query').value.trim();
+            if (!q) return alert('Enter a question');
+            if (!uploaded) return alert('Upload a PDF first');
 
-            if (!question) {
-                showStatus('questionStatus', 'Please enter a question', 'error');
-                return;
-            }
-
-            if (!documentUploaded) {
-                showStatus('questionStatus', 'Please upload a document first', 'error');
-                return;
-            }
-
-            showStatus('questionStatus', 'Thinking...', 'loading');
-            document.getElementById('askBtn').disabled = true;
-
+            document.getElementById('queryStatus').textContent = 'Thinking...';
+            
             try {
-                const response = await fetch('/ask', {
+                const res = await fetch('/ask', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ question })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: q })
                 });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showStatus('questionStatus', '', '');
-                    displayAnswer(data.answer, data.sources);
-                    document.getElementById('questionInput').value = '';
+                
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById('answerText').textContent = data.answer;
+                    document.getElementById('sources').innerHTML = data.sources.map(s => 
+                        '<pre>' + s.substring(0, 200) + '...</pre>'
+                    ).join('');
+                    document.getElementById('answer').style.display = 'block';
+                    document.getElementById('queryStatus').textContent = '';
                 } else {
-                    showStatus('questionStatus', `Error: ${data.detail}`, 'error');
+                    document.getElementById('queryStatus').textContent = data.detail;
+                    document.getElementById('queryStatus').className = 'status error';
                 }
-            } catch (error) {
-                showStatus('questionStatus', `Error: ${error.message}`, 'error');
-            } finally {
-                document.getElementById('askBtn').disabled = false;
+            } catch (e) {
+                document.getElementById('queryStatus').textContent = e.message;
+                document.getElementById('queryStatus').className = 'status error';
             }
         }
 
-        function displayAnswer(answer, sources) {
-            document.getElementById('answerText').textContent = answer;
-            
-            const sourcesList = document.getElementById('sourcesList');
-            sourcesList.innerHTML = '';
-            
-            sources.forEach((source, index) => {
-                const sourceDiv = document.createElement('div');
-                sourceDiv.className = 'source-item';
-                sourceDiv.textContent = source.substring(0, 300) + (source.length > 300 ? '...' : '');
-                sourcesList.appendChild(sourceDiv);
-            });
-
-            document.getElementById('answerSection').classList.remove('hidden');
-        }
-
-        function showStatus(elementId, message, type) {
-            const statusEl = document.getElementById(elementId);
-            statusEl.textContent = message;
-            statusEl.className = `status ${type}`;
-        }
-
-        // Allow Enter key to submit question
-        document.getElementById('questionInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !document.getElementById('askBtn').disabled) {
-                askQuestion();
-            }
+        document.getElementById('query').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') ask();
         });
     </script>
 </body>
