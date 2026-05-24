@@ -9,7 +9,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
 CHROMA_PATH = "chroma_db"
-EMBED_MODEL = "all-MiniLM-L6-v2"  # free, runs locally, no API key needed
+EMBED_MODEL = "all-MiniLM-L6-v1"  # smaller model, ~22MB vs 80MB for v2
 
 
 def ingest(pdf_path: str):

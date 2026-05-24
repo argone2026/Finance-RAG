@@ -16,7 +16,7 @@ COPY requirement.txt .
 RUN pip install --no-cache-dir -r requirement.txt
 
 # Pre-download HuggingFace embedding model to avoid memory issues on first run
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v1')"
 
 # Copy application code
 COPY . .
