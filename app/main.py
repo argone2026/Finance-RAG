@@ -11,7 +11,7 @@ import hashlib
 import hmac
 from pathlib import Path
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, Header
+from fastapi import FastAPI, UploadFile, File, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -34,12 +34,13 @@ HASH_SALT = "finance-rag-salt-2026"
 PASSWORD_HASH = hashlib.sha256((HASH_SALT + PLAINTEXT_PASSWORD).encode()).hexdigest()
 
 
-def verify_auth(authorization: str = Header(None)):
-    """Verify authentication token using HMAC-SHA256 comparison"""
+async def verify_auth(authorization: str = Header(None)):
+    """Verify authentication token using HMAC-SHA256 comparison (optional)"""
+    # If no auth header provided, allow through
     if not authorization:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        return True
     
-    # Extract token from "Bearer <token>" format
+    # If auth header is provided, validate it
     try:
         scheme, token = authorization.split()
         if scheme.lower() != "bearer":
@@ -58,9 +59,8 @@ def verify_auth(authorization: str = Header(None)):
 
 
 @app.post("/upload")
-async def upload_pdf(file: UploadFile = File(...), authorization: str = Header(None)):
+async def upload_pdf(file: UploadFile = File(...), _auth = Depends(verify_auth)):
     """Upload a bank statement PDF and ingest it into the vector store."""
-    verify_auth(authorization)
     
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
         shutil.copyfileobj(file.file, tmp)
@@ -83,9 +83,8 @@ class QuestionRequest(BaseModel):
 
 
 @app.post("/ask")
-async def ask_question(body: QuestionRequest, authorization: str = Header(None)):
+async def ask_question(body: QuestionRequest, _auth = Depends(verify_auth)):
     """Ask a question about your uploaded bank statement."""
-    verify_auth(authorization)
     
     try:
         result = ask(body.question)
@@ -99,3 +98,12 @@ def root():
     """Serve the frontend UI"""
     index_path = Path(__file__).parent.parent / "index.html"
     return FileResponse(index_path)
+
+
+@app.get("/favicon.ico")
+def favicon():
+    """Serve favicon"""
+    favicon_path = Path(__file__).parent.parent / "favicon.ico"
+    if favicon_path.exists():
+        return FileResponse(favicon_path, media_type="image/x-icon")
+    return {"status": "not found"}
