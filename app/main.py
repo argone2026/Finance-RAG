@@ -7,11 +7,9 @@ main.py — FastAPI server
 import os
 import shutil
 import tempfile
-import hashlib
-import hmac
 from pathlib import Path
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, Header, Depends
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -28,38 +26,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Password hashing setup using HMAC-SHA256
-PLAINTEXT_PASSWORD = os.getenv("SECRET_KEY", "Aniruddha Routh")
-HASH_SALT = "finance-rag-salt-2026"
-PASSWORD_HASH = hashlib.sha256((HASH_SALT + PLAINTEXT_PASSWORD).encode()).hexdigest()
-
-
-async def verify_auth(authorization: str = Header(None)):
-    """Verify authentication token using HMAC-SHA256 comparison (optional)"""
-    # If no auth header provided, allow through
-    if not authorization:
-        return True
-    
-    # If auth header is provided, validate it
-    try:
-        scheme, token = authorization.split()
-        if scheme.lower() != "bearer":
-            raise HTTPException(status_code=401, detail="Unauthorized")
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    # Hash the provided password and compare with stored hash
-    token_hash = hashlib.sha256((HASH_SALT + token).encode()).hexdigest()
-    
-    # Use constant-time comparison to prevent timing attacks
-    if not hmac.compare_digest(token_hash, PASSWORD_HASH):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    return True
-
 
 @app.post("/upload")
-async def upload_pdf(file: UploadFile = File(...), _auth = Depends(verify_auth)):
+async def upload_pdf(file: UploadFile = File(...)):
     """Upload a bank statement PDF and ingest it into the vector store."""
     
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
@@ -83,7 +52,7 @@ class QuestionRequest(BaseModel):
 
 
 @app.post("/ask")
-async def ask_question(body: QuestionRequest, _auth = Depends(verify_auth)):
+async def ask_question(body: QuestionRequest):
     """Ask a question about your uploaded bank statement."""
     
     try:
