@@ -42,7 +42,7 @@ cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
-Visit **http://localhost:8000** and log in with `Aniruddha Routh`
+Visit **http://localhost:8000** and log in with passkey (contact the author)
 
 ### Docker Deployment
 
@@ -53,7 +53,7 @@ docker build -t finance-rag .
 # Run container
 docker run -p 8000:8000 \
   -e GROQ_API_KEY=your_key \
-  -e SECRET_KEY="Aniruddha Routh" \
+  -e SECRET_KEY="--" \
   -v $(pwd)/chroma_db:/app/chroma_db \
   finance-rag
 ```
@@ -105,7 +105,7 @@ All protected endpoints require `Authorization: Bearer <password>` header
 Upload and process a PDF file
 ```bash
 curl -X POST http://localhost:8000/upload \
-  -H "Authorization: Bearer Aniruddha Routh" \
+  -H "Authorization: Bearer password" \
   -F "file=@statement.pdf"
 ```
 
@@ -120,7 +120,7 @@ Response:
 Ask a question about uploaded documents
 ```bash
 curl -X POST http://localhost:8000/ask \
-  -H "Authorization: Bearer Aniruddha Routh" \
+  -H "Authorization: Bearer aa aa" \
   -H "Content-Type: application/json" \
   -d '{"question": "What was my closing balance?"}'
 ```
@@ -148,7 +148,7 @@ Response:
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `GROQ_API_KEY` | Required | Groq API authentication |
-| `SECRET_KEY` | `Aniruddha Routh` | Login password |
+| `SECRET_KEY` | `aa aa` | Login password |
 
 ## Project Structure
 
