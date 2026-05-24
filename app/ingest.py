@@ -9,7 +9,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
 CHROMA_PATH = "chroma_db"
-EMBED_MODEL = "all-MiniLM-L6-v1"  # smaller model, ~22MB vs 80MB for v2
+EMBED_MODEL = "sentence-transformers/all-MiniLM-L3-v2"  # ~27MB, minimal memory footprint
 
 
 def ingest(pdf_path: str):
