@@ -1,126 +1,100 @@
 # Finance RAG Assistant 💰
 
-A secure, AI-powered Retrieval-Augmented Generation (RAG) application that answers questions about your bank statements using advanced LLMs.
+An AI-powered Retrieval-Augmented Generation (RAG) application that answers questions about your bank statements using advanced LLMs.
 
-## Features
-
-✅ **Secure Authentication** - HMAC-SHA256 password hashing  
-✅ **PDF Processing** - Extract and analyze bank statements  
-✅ **AI-Powered Q&A** - Groq LLM with local embeddings  
-✅ **Vector Search** - ChromaDB for semantic similarity  
-✅ **Beautiful UI** - Modern, responsive frontend  
-✅ **Docker Ready** - Easy containerized deployment  
-✅ **100% Free** - Groq + Render free tiers  
-
-## Quick Start
+## Quick Start (Local Setup)
 
 ### Prerequisites
 - Python 3.13+
 - Groq API key (free at https://console.groq.com)
 
-### Local Development
+### Installation
 
 ```bash
-# Clone & setup
-git clone <repo>
-cd finance-rag
+# 1. Clone repository
+git clone https://github.com/argone2026/Finance-RAG.git
+cd Finance-RAG
 
-# Create virtual environment
+# 2. Create virtual environment
 python -m venv venv
 source venv/bin/activate  # macOS/Linux
 # or
 venv\Scripts\activate  # Windows
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirement.txt
 
-# Create .env file
-cp .env.example .env
-# Edit .env with your GROQ_API_KEY
+# 4. Create .env file and add your API key
+echo "GROQ_API_KEY=your_groq_api_key_here" > .env
 
-# Run locally
-uvicorn app.main:app --reload
+# 5. Run the app
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Visit **http://localhost:8000** and log in with passkey (contact the author)
+### Access the App
+Open your browser: **http://localhost:8000**
 
-### Docker Deployment
+## How It Works
 
-```bash
-# Build image
-docker build -t finance-rag .
+1. **Upload PDF** - Add your bank statement
+2. **Ask Questions** - Ask anything about your statement
+3. **Get Answers** - AI analyzes the document and responds
 
-# Run container
-docker run -p 8000:8000 \
-  -e GROQ_API_KEY=your_key \
-  -e SECRET_KEY="--" \
-  -v $(pwd)/chroma_db:/app/chroma_db \
-  finance-rag
-```
+### Example Questions
+- "What was my closing balance?"
+- "How many transactions did I make?"
+- "What was the largest deposit?"
 
-Or with Docker Compose:
-```bash
-docker-compose up -d
-```
 
-## Deployment
+---
 
-🚀 **Recommended: Render.com (Free)**
+## Demo Video
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for:
-- Step-by-step Render deployment
-- AWS, DigitalOcean, Heroku options
-- Security best practices
-- Production checklist
+📹 **[Watch how it works locally](INSERT_VIDEO_LINK_HERE)**
+
+*(Add your video link here to show the app in action)*
+
+---
+
+## Features
+
+✅ PDF document upload and processing  
+✅ AI-powered Q&A with Groq LLM  
+✅ Semantic search with local embeddings  
+✅ Vector database (ChromaDB)  
+✅ Clean, minimal UI  
+✅ Works entirely locally
 
 ## Architecture
 
 ```
-┌─────────────┐
-│   Browser   │ ← Modern React-like UI
-└──────┬──────┘
-       │ HTTPS
-       ↓
+Browser (UI)
+    ↓
+FastAPI Server (Port 8000)
+    ↓
 ┌─────────────────────┐
-│   FastAPI Server    │
-├─────────────────────┤
-│  /upload  - Protected
-│  /ask     - Protected
-│  /        - Public
-└──────┬──────────────┘
-       │
-       ├→ PDF Processing (PyPDF)
-       ├→ Text Chunking (LangChain)
-       ├→ Embeddings (HuggingFace Local)
-       ├→ Vector DB (ChromaDB)
-       └→ LLM (Groq API)
+│  PDF Processing     │ → PyPDF, LangChain
+│  Embeddings         │ → HuggingFace (local)
+│  Vector Database    │ → ChromaDB
+│  LLM Generation     │ → Groq API
+└─────────────────────┘
 ```
 
-## API
-
-### Authenticate
-All protected endpoints require `Authorization: Bearer <password>` header
+## API Endpoints
 
 ### POST `/upload`
-Upload and process a PDF file
+Upload a PDF file for analysis
+
 ```bash
 curl -X POST http://localhost:8000/upload \
-  -H "Authorization: Bearer password" \
   -F "file=@statement.pdf"
-```
-
-Response:
-```json
-{
-  "message": "Ingested 'statement.pdf' successfully."
-}
 ```
 
 ### POST `/ask`
 Ask a question about uploaded documents
+
 ```bash
 curl -X POST http://localhost:8000/ask \
-  -H "Authorization: Bearer aa aa" \
   -H "Content-Type: application/json" \
   -d '{"question": "What was my closing balance?"}'
 ```
@@ -129,103 +103,89 @@ Response:
 ```json
 {
   "answer": "$10,556.65",
-  "sources": [
-    "SAMPLE BANK STATEMENT\nAccount Holder: John Smith\n..."
-  ]
+  "sources": ["...document excerpt..."]
 }
 ```
 
-## Security
-
-- **Passwords**: Hashed with HMAC-SHA256 (one-way encryption)
-- **Authentication**: Bearer tokens in Authorization header
-- **Data**: PDFs processed in-memory, only embeddings stored
-- **Non-root**: Docker runs as unprivileged user
-- **HTTPS**: Recommended for production (Render provides auto)
-
-## Configuration
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `GROQ_API_KEY` | Required | Groq API authentication |
-| `SECRET_KEY` | `aa aa` | Login password |
+---
 
 ## Project Structure
 
 ```
 finance-rag/
 ├── app/
-│   ├── main.py          # FastAPI routes & auth
-│   ├── rag.py           # RAG pipeline & LLM
-│   └── ingest.py        # PDF processing
-├── index.html           # Frontend UI
+│   ├── main.py          # FastAPI server
+│   ├── ingest.py        # PDF processing
+│   └── rag.py           # Q&A pipeline
+├── index.html           # Web UI
 ├── chroma_db/           # Vector database
 ├── data/                # Sample PDFs
-├── Dockerfile           # Container image
-├── docker-compose.yml   # Multi-container setup
-├── requirement.txt      # Python dependencies
-└── DEPLOYMENT.md        # Deployment guide
+├── requirement.txt      # Dependencies
+└── README.md            # This file
 ```
-
-## Technologies
-
-- **Backend**: FastAPI, Uvicorn
-- **LLM**: Groq (Llama 3.1)
-- **Embeddings**: HuggingFace (all-MiniLM-L6-v2)
-- **Vector DB**: ChromaDB
-- **Document Processing**: LangChain, PyPDF
-- **Frontend**: HTML/CSS/JavaScript
-- **Container**: Docker
-
-## Performance
-
-- **Latency**: 2-3s per question (Groq API)
-- **Throughput**: ~30-50 requests/minute (free tier)
-- **Model Size**: ~100MB (embeddings downloaded on first use)
-- **Database**: ~1MB per 50 PDF pages
-
-## Limitations
-
-- **File Size**: Tested up to 50MB PDFs
-- **Rate Limit**: Groq free tier ~5k requests/month
-- **Storage**: Render free tier: 0.5GB ephemeral
-- **Timeout**: 30s API response timeout
-
-## Development
-
-```bash
-# Run tests
-pytest
-
-# Format code
-black app/
-
-# Type check
-mypy app/
-
-# Lint
-flake8 app/
-```
-
-## Contributing
-
-Contributions welcome! Please:
-1. Fork the repo
-2. Create feature branch: `git checkout -b feature/xyz`
-3. Commit changes: `git commit -am 'Add feature'`
-4. Push: `git push origin feature/xyz`
-5. Create Pull Request
-
-## License
-
-MIT License - See LICENSE file
-
-## Support
-
-- **Issues**: GitHub Issues
-- **Docs**: DEPLOYMENT.md for setup help
-- **API Key**: https://console.groq.com
 
 ---
 
-**Made with ❤️ for secure document analysis**
+## Technologies Used
+
+- **Backend**: FastAPI, Uvicorn
+- **LLM**: Groq (Llama 3.1 70B)
+- **Embeddings**: HuggingFace Sentence Transformers
+- **Vector DB**: ChromaDB
+- **Document Processing**: LangChain, PyPDF
+- **Frontend**: HTML/CSS/JavaScript
+
+---
+
+## Troubleshooting
+
+**Port 8000 already in use?**
+```bash
+lsof -i :8000 | grep LISTEN | awk '{print $2}' | xargs kill -9
+```
+
+**Model download fails?**
+The embedding model (87MB) downloads on first use. Ensure stable internet connection.
+
+**GROQ_API_KEY error?**
+Make sure `.env` file exists and contains a valid Groq API key.
+
+---
+
+## Local Testing
+
+### Test with sample PDF
+```bash
+python create_minimal_pdf.py
+curl -X POST http://localhost:8000/upload -F "file=@data/minimal_test.pdf"
+```
+
+### Test Q&A
+```bash
+curl -X POST http://localhost:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What was the closing balance?"}'
+```
+
+---
+
+## Performance
+
+- Response time: 2-3 seconds per question
+- Model size: ~100MB (downloaded once)
+- Storage: ~1MB per 50 pages of PDF
+
+---
+
+## Notes
+
+- This app is designed for **local use**
+- All processing happens on your machine
+- No data is stored on external servers (except Groq API calls)
+- PDFs are processed in-memory for security
+
+---
+
+## License
+
+MIT
