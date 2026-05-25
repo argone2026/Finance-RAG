@@ -1,4 +1,4 @@
-# Finance RAG Assistant 💰
+# Finance RAG Assistant
 
 An AI-powered Retrieval-Augmented Generation (RAG) application that answers questions about your bank statements using advanced LLMs.
 
