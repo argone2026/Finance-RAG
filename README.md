@@ -50,9 +50,9 @@ Open your browser: **http://localhost:8000**
 
 ## Demo Video
 
-📹 **[Watch how it works locally](INSERT_VIDEO_LINK_HERE)**
+📹 **Watch how it works locally:**
 
-*(Add your video link here to show the app in action)*
+[![Finance RAG Demo](https://img.youtube.com/vi/2Rx14Rrx6Zw/0.jpg)](https://www.youtube.com/watch?v=2Rx14Rrx6Zw)
 
 ---
 
