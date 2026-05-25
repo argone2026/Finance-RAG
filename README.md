@@ -139,6 +139,11 @@ finance-rag/
 
 ## Troubleshooting
 
+**Restart server after changes**
+```bash
+pkill -f uvicorn; sleep 1 && cd /Users/argone.exe/Desktop/finance-rag && source venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
 **Port 8000 already in use?**
 ```bash
 lsof -i :8000 | grep LISTEN | awk '{print $2}' | xargs kill -9
