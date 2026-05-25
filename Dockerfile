@@ -28,4 +28,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" || exit 1
 
 # Run via startup script (handles PORT env variable properly)
-CMD ["./start.sh"]
+CMD ["/bin/sh", "./start.sh"]
